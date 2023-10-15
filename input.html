@@ -11,8 +11,7 @@
     <link href="/dist/output.css" rel="stylesheet">
 
 </head>
-
-<body>
+<body class = "bg-slate-700">
     <link rel="stylesheet" type="text/css" href="map.css" />
     <!-- <script type="module" src="map.js"></script> -->
     <nav class="bg-gray-800">
@@ -101,7 +100,7 @@
     <div class="flex items-center justify-center mt-10">
         <div class="bg-white p-8 rounded shadow-lg max-w-md w-full">
             <h2 class="text-2xl font-bold mb-4 text-black">Upload Memory</h2>
-            <form onsubmit="return validateForm()">
+            <form>
                 <div class="mb-4">
                     <label for="file_input" class="block mb-2 text-sm">Select Memory:</label>
                     <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300 transition duration-150 ease-in-out cursor-pointer bg-gray-50 text-gray-900 dark:text-gray-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
@@ -130,7 +129,49 @@
     </div>
     
     <script>
+        let location2 = null;
+        function initAutocomplete() {
+            const input = document.getElementById("pac-input");
+            const searchBox = new google.maps.places.SearchBox(input);
+            
+            searchBox.addListener("places_changed", () => {
+                const places = searchBox.getPlaces();
+                if (places.length == 0) {
+                    return;
+                }
+                places.forEach((place) => {
+                    if (!place.geometry || !place.geometry.location) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+
+                    const icon = {
+                        url: place.icon,
+                        size: new google.maps.Size(71, 71),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(17, 34),
+                        scaledSize: new google.maps.Size(25, 25),
+                    };
+
+                    console.log("SELECTED")
+                    if (place.geometry.viewport) {
+                        console.log("SELECTEDX")
+                        console.log(place)
+                        console.log(place.geometry.location.lat())
+                        console.log(place.geometry.location.lng())
+                        const lat = place.geometry.location.lat()
+                        const lng = place.geometry.location.lng()
+                        location2 = {lat, lng}
+                    } else { }
+                });
+                console.log("SELECTEDF")
+                console.log(location2);
+            });
+        }
+        window.initMap = initAutocomplete;
+
         function validateForm() {
+            event.preventDefault(); 
             const fileInput = document.getElementById('file_input');
             const vaultNameInput = document.getElementById('vault-name');
     
@@ -145,18 +186,24 @@
                 alert('Please enter a vault name.');
                 return false;
             }
+            sendFirstRequest(email, vaultNameInput.value.trim(), location2);
+            sendImageList(email, vaultNameInput.value.trim(), fileInput.files);
         }
-    </script>
-    
-    <script>
-        async function sendImageList(email, vaultName, imageList, file) {
-            const url = 'http://127.0.0.1:5000/get_images';
-            const formData = new FormData();
-            formData.append('file', file);
+        const email = "test@gmail.com"
+        async function sendFirstRequest(email,vault_name, location){
+            const url = 'http://127.0.0.1:5000/initialize_vault';
+            
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        vault_name: vault_name,
+                        location:location
+                    })
                 });
 
                 if (!response.ok) {
@@ -169,6 +216,35 @@
                 console.error('There was a problem with the fetch operation:', error);
             }
         }
+        async function sendImageList(email, vaultName, files) {
+            const url = 'http://127.0.0.1:5000/get_images/' + email + "/" + vaultName;
+            console.log(url);
+            const formData = new FormData();
+            let counter = 0
+            console.log(files);
+            console.log(files[0])
+            for (let i = 0; i <= files.length; i++){
+                formData.append("image" + i, files[i]);
+            }
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                console.log('Images received successfully:', data);
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
+    </script>
+    
+    <script>
+        
         async function handleFileUpload(event) {
             const fileInput = event.target;
             const files = fileInput.files;
@@ -211,49 +287,12 @@
 
     </script>
     <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcqPjdxQozQXUG5W6vi00j-dmRUireGa8&callback=initMap&v=weekly&libraries=places"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8pZ0AV2vQOwMfOBlIjXAYbOwjoZ1xEnk&callback=initMap&v=weekly&libraries=places"
         defer></script>
     <script>(g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })
             ({ key: "AIzaSyBrjCR8dU882zb9neQM394TcN0DpRGDjw0", v: "beta" });</script>
     <script>
-        function initAutocomplete() {
-            const input = document.getElementById("pac-input");
-            const searchBox = new google.maps.places.SearchBox(input);
-
-            searchBox.addListener("places_changed", () => {
-                const places = searchBox.getPlaces();
-                if (places.length == 0) {
-                    return;
-                }
-                places.forEach((place) => {
-                    if (!place.geometry || !place.geometry.location) {
-                        console.log("Returned place contains no geometry");
-                        return;
-                    }
-
-                    const icon = {
-                        url: place.icon,
-                        size: new google.maps.Size(71, 71),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(17, 34),
-                        scaledSize: new google.maps.Size(25, 25),
-                    };
-
-                    console.log("SELECTED")
-                    if (place.geometry.viewport) {
-                        console.log("SELECTEDX")
-                        console.log(place)
-                        console.log(place.geometry.location.lat())
-                        console.log(place.geometry.location.lng())
-                        const lat = place.geometry.location.lat()
-                        const lng = place.geometry.location.lng()
-                    } else { }
-                });
-                console.log("SELECTEDF")
-            });
-        }
-
-        window.initMap = initAutocomplete;
+        
 
     </script>
 </body>

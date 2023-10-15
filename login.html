@@ -12,7 +12,7 @@
 
 </head>
 
-<body>
+<body class = "bg-slate-700">
     <nav class="bg-gray-800">
         <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div class="relative flex h-16 items-center justify-between">
@@ -118,9 +118,8 @@
         </div>
     </div>
     <script>
-
         async function loginUser(email, password) {
-            const url = 'http://127.0.0.1:5000/signup';  // Change to your login endpoint
+            const url = 'http://127.0.0.1:5000/login';  // Change to your login endpoint
             console.log("trying")
             try {
                 const response = await fetch(url, {
