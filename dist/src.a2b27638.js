@@ -39571,7 +39571,9 @@ function askPermission() {
     window.addEventListener("deviceorientation", function () {});
   }
 }
-askPermission();
+
+// askPermission();
+
 app = document.querySelector("#app");
 
 // const btn = document.querySelector("#gyro");

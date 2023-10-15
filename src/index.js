@@ -25,7 +25,7 @@ function askPermission() {
     }
 }
 
-askPermission();
+// askPermission();
 
 
 app = document.querySelector("#app");
