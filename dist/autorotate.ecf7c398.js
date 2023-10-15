@@ -39550,61 +39550,29 @@ if (_three.REVISION != THREE_REVISION) {
  * @namespace PANOLENS
  */
 window.TWEEN = Tween;
-},{"three":"node_modules/three/build/three.module.js","process":"node_modules/process/browser.js"}],"src/index.js":[function(require,module,exports) {
+},{"three":"node_modules/three/build/three.module.js","process":"node_modules/process/browser.js"}],"src/autorotate.js":[function(require,module,exports) {
 "use strict";
 
 require("./styles.css");
-console.log("Init");
 var PANOLENS = require("panolens");
 var app, panorama, viewer, infospot;
-
-// function askPermission() {
-//     alert("Running");
-//     // feature detect
-//     if (typeof DeviceOrientationEvent.requestPermission === "function") {
-//     DeviceOrientationEvent.requestPermission()
-//         .then(permissionState => {
-//         if (permissionState === "granted") {
-//             console.log("working")
-//             alert("Success");
-//             window.addEventListener("deviceorientation", () => {});
-//         }
-//         })
-//         .catch(console.error);
-//     } else {
-//         // handle regular non iOS 13+ devices
-//     }
-// }
-
-// askPermission();
-
 app = document.querySelector("#app");
-
-// const btn = document.querySelector("#gyro");
-// console.log("1")
-// console.log(btn)
-// btn.addEventListener("click", function() { DeviceMotionEvent.requestPermission(); });
-
 viewer = new PANOLENS.Viewer({
   enableReticle: false,
   container: app,
   output: "console",
-  viewIndicator: true
+  viewIndicator: true,
+  autoRotate: true,
+  autoRotateSpeed: 2,
+  autoRotateActivationDuration: 5000,
+  dwellTime: 1000
 });
 panorama = new PANOLENS.ImagePanorama('https://firebasestorage.googleapis.com/v0/b/chalk-bot.appspot.com/o/res.jpg?alt=media&token=1b96c6ea-a503-49cb-9c17-adcc2afd5d25&_gl=1*e1f3ay*_ga*MTk4MjI3NzU5OC4xNjk0NjU0MzUz*_ga_CW55HF8NVT*MTY5NzI0NjQzNy4yMS4xLjE2OTcyNDY0NzkuMTguMC4w'
-/* The commented line `//
-"https://pchen66.github.io/Panolens/examples/asset/textures/equirectangular/tunnel.jpg"` is
-specifying the URL of an equirectangular image that will be used as the panorama for the viewer. */
-// "https://pchen66.github.io/Panolens/examples/asset/textures/equirectangular/tunnel.jpg"
-// '/Users/dhruvroongta/Downloads/a-landscape-with-hills-and-trees-hvwpfxfz.jpeg'
-//    ' http://127.0.0.1:8080/Unknown-8.jpeg'
-// 'Unknown-8.jpg'
-// 'https://images.unsplash.com/photo-1596263576925-d90d63691097?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8MzYwfGVufDB8fDB8fHww&auto=format&fit=crop&w=900&q=60'
-//"https://pchen66.github.io/Panolens/examples/asset/textures/equirectangular/tunnel.jpg"
+//   "https://pchen66.github.io/Panolens/examples/asset/textures/equirectangular/tunnel.jpg"
 );
 
 infospot = new PANOLENS.Infospot(350, PANOLENS.DataImage.Info);
-infospot.position.set(0, 0, 0);
+infospot.position.set(0, -2000, -5000);
 panorama.add(infospot);
 viewer.add(panorama);
 
@@ -39789,5 +39757,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.js"], null)
-//# sourceMappingURL=/src.a2b27638.js.map
+},{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/autorotate.js"], null)
+//# sourceMappingURL=/autorotate.ecf7c398.js.map
