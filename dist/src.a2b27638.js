@@ -39557,27 +39557,21 @@ require("./styles.css");
 console.log("Init");
 var PANOLENS = require("panolens");
 var app, panorama, viewer, infospot;
-
-// function askPermission() {
-//     alert("Running");
-//     // feature detect
-//     if (typeof DeviceOrientationEvent.requestPermission === "function") {
-//     DeviceOrientationEvent.requestPermission()
-//         .then(permissionState => {
-//         if (permissionState === "granted") {
-//             console.log("working")
-//             alert("Success");
-//             window.addEventListener("deviceorientation", () => {});
-//         }
-//         })
-//         .catch(console.error);
-//     } else {
-//         // handle regular non iOS 13+ devices
-//     }
-// }
-
-// askPermission();
-
+function askPermission() {
+  // feature detect
+  if (typeof DeviceOrientationEvent.requestPermission === "function") {
+    DeviceOrientationEvent.requestPermission().then(function (permissionState) {
+      if (permissionState === "granted") {
+        console.log("working");
+        window.addEventListener("deviceorientation", function () {});
+      }
+    }).catch(console.error);
+  } else {
+    // handle regular non iOS 13+ devices
+    window.addEventListener("deviceorientation", function () {});
+  }
+}
+askPermission();
 app = document.querySelector("#app");
 
 // const btn = document.querySelector("#gyro");
