@@ -1,0 +1,18 @@
+  
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+    font-family: sans-serif;
+    
+  }
+  
+  #app {
+    
+    border: 2px solid red;
+    height: 800px;
+    width: 100%;
+  }
+
+
+/*# sourceMappingURL=/src.a2b27638.css.map */
